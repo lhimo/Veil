@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Veil: private, ad-free launcher for Google TV and Android TV</title>
+<meta name="description" content="Veil is a free, open-source home screen for Google TV and Android TV. No ads or recommendations: Continue Watching from Trakt that opens straight in Nuvio, system-wide ad blocking, synced lyrics and a music visualizer.">
+<link rel="canonical" href="https://trbrnt.github.io/Veil/">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#15171C">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Veil">
+<meta property="og:title" content="Veil: private, ad-free launcher for Google TV and Android TV">
+<meta property="og:description" content="Veil is a free, open-source home screen for Google TV and Android TV. No ads or recommendations: Continue Watching from Trakt that opens straight in Nuvio, system-wide ad blocking, synced lyrics and a music visualizer.">
+<meta property="og:url" content="https://trbrnt.github.io/Veil/">
+<meta property="og:image" content="https://trbrnt.github.io/Veil/screenshots/01-home.jpg">
+<meta property="og:image:width" content="1600">
+<meta property="og:image:height" content="900">
+<meta property="og:image:alt" content="Veil home screen on a Google TV">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: one calm column like the TV's Home screen. A screenshot-led hero, then alternating
+   feature bands (text beside a TV frame), theme swatches that recolour the page, FAQ, footer. */
+:root {
+  --theme-bg: #15171C;      /* Veil's own "Veil" theme */
+  --theme-accent: #D9FF6B;
+  --bg: var(--theme-bg);
+  --raise: color-mix(in srgb, var(--theme-bg) 88%, #ffffff);
+  --text: #F4F5F7;
+  --muted: color-mix(in srgb, #F4F5F7 64%, var(--theme-bg));
+  --line: color-mix(in srgb, #F4F5F7 12%, transparent);
+  --accent: var(--theme-accent);         /* accent as text */
+  --fill: var(--theme-accent);           /* accent as a button fill */
+  --on-fill: #111318;                    /* Veil.Ink */
+  --font: "Manrope", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --r: 22px;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: color-mix(in srgb, var(--theme-bg) 4%, #F6F7F4);
+    --raise: #FFFFFF;
+    --text: #111318;
+    --muted: #555A63;
+    --line: rgba(17,19,24,.12);
+    --accent: color-mix(in srgb, var(--theme-accent) 35%, #1d2410);
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: color-mix(in srgb, var(--theme-bg) 4%, #F6F7F4);
+  --raise: #FFFFFF;
+  --text: #111318;
+  --muted: #555A63;
+  --line: rgba(17,19,24,.12);
+  --accent: color-mix(in srgb, var(--theme-accent) 35%, #1d2410);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+img { max-width: 100%; height: auto; }
+body {
+  background: var(--bg); color: var(--text); font-family: var(--font); font-size: 17px; line-height: 1.6;
+  transition: background-color .5s ease;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+.wrap {
+  max-width: 1120px; margin: 0 auto;
+  padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px));
+}
+h1, h2, h3 { line-height: 1.08; text-wrap: balance; margin: 0; letter-spacing: -0.03em; font-weight: 800; }
+h1 { font-size: clamp(2.4rem, 6.2vw, 4.6rem); }
+h2 { font-size: clamp(1.7rem, 3.6vw, 2.5rem); }
+h3 { font-size: 1.1rem; letter-spacing: -0.01em; }
+p { margin: 0; }
+.eyebrow { font-size: .74rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+.lead { font-size: 1.15rem; color: var(--muted); max-width: 34em; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+
+/* ---- nav ---- */
+nav { padding-block: 22px; }
+nav .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.logo { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.3rem; text-decoration: none; letter-spacing: -0.02em; }
+.logo svg { width: 20px; height: 20px; }
+.navlinks { display: flex; gap: 22px; font-size: .92rem; font-weight: 600; color: var(--muted); }
+.navlinks a { text-decoration: none; }
+.navlinks a:hover { color: var(--text); }
+
+/* ---- pills (same shape as the TV UI) ---- */
+.btns { display: flex; flex-wrap: wrap; gap: 12px; }
+.pill {
+  display: inline-flex; align-items: center; gap: 9px; padding: 13px 24px; border-radius: 999px;
+  font-weight: 700; font-size: .98rem; text-decoration: none; border: 1px solid var(--line);
+  transition: transform .2s ease, background-color .3s ease;
+}
+.pill:hover { transform: translateY(-1px); }
+.pill.primary { background: var(--fill); color: var(--on-fill); border-color: transparent; }
+.pill svg { width: 18px; height: 18px; }
+
+/* ---- hero ---- */
+.hero { padding-block: 40px 30px; }
+.hero .wrap { display: grid; gap: 26px; }
+.hero h1 span { color: var(--accent); }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: .9rem; color: var(--muted); font-weight: 600; }
+.facts b { color: var(--text); font-weight: 700; }
+
+.tv {
+  position: relative; border-radius: var(--r); overflow: hidden; background: #000;
+  box-shadow: 0 0 0 1px var(--line), 0 30px 80px -30px rgba(0,0,0,.6);
+  aspect-ratio: 16 / 9; max-width: 100%;
+}
+.tv img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.hero .tv { margin-top: 18px; }
+.caption { font-size: .85rem; color: var(--muted); margin-top: 10px; }
+
+/* ---- feature bands ---- */
+section.band { padding-block: 70px; border-top: 1px solid var(--line); }
+.split { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px; align-items: center; }
+.split.flip > :first-child { order: 2; }
+.copy { display: grid; gap: 16px; min-width: 0; }
+.copy ul { margin: 4px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.copy li { padding-left: 22px; position: relative; color: var(--muted); }
+.copy li::before { content: ""; position: absolute; left: 0; top: .62em; width: 8px; height: 8px; border-radius: 50%; background: var(--fill); }
+.copy li b { color: var(--text); font-weight: 700; }
+.stack { display: grid; gap: 14px; min-width: 0; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.pair .tv { border-radius: 14px; }
+
+/* Nuvio flow: what actually happens, in order */
+.flow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 6px; }
+.flow div { border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; background: var(--raise); }
+.flow small { display: block; font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+.flow span { font-size: .92rem; font-weight: 600; line-height: 1.35; display: block; margin-top: 4px; }
+
+/* ---- themes ---- */
+.themes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.swatch {
+  display: inline-flex; align-items: center; gap: 9px; padding: 7px 14px 7px 7px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--raise); color: var(--text); font: 600 .9rem var(--font); cursor: pointer;
+}
+.swatch i { width: 24px; height: 24px; border-radius: 50%; position: relative; overflow: hidden; }
+.swatch i::after { content: ""; position: absolute; inset: 7px; border-radius: 50%; background: var(--a); }
+.swatch[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+
+/* ---- privacy list ---- */
+.services { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 28px; }
+.services div { border-top: 2px solid var(--fill); padding-top: 12px; }
+.services h3 { margin-bottom: 4px; }
+.services p { font-size: .92rem; color: var(--muted); }
+
+/* ---- devices ---- */
+.req { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 28px; margin-top: 26px; }
+.req p { color: var(--muted); font-size: .96rem; }
+.req h3 { margin-bottom: 6px; }
+
+/* ---- FAQ ---- */
+.faq { max-width: 760px; display: grid; gap: 0; margin-top: 20px; }
+details { border-bottom: 1px solid var(--line); padding-block: 18px; }
+summary { cursor: pointer; font-weight: 700; font-size: 1.05rem; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; color: var(--accent); font-weight: 800; }
+details[open] summary::after { content: "–"; }
+details p { color: var(--muted); margin-top: 10px; max-width: 60ch; }
+code { font-family: var(--mono); font-size: .88em; background: var(--raise); border: 1px solid var(--line); padding: 1px 6px; border-radius: 6px; }
+
+/* ---- footer ---- */
+footer { border-top: 1px solid var(--line); padding-block: 40px 60px; font-size: .86rem; color: var(--muted); }
+footer .wrap { display: grid; gap: 10px; }
+footer .cta-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 18px; margin-bottom: 20px; }
+footer .cta-row h2 { color: var(--text); }
+
+@media (max-width: 820px) {
+  .split { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .split.flip > :first-child { order: 0; }
+  .navlinks a:not(.gh) { display: none; }
+  section.band { padding-block: 52px; }
+}
+@media (max-width: 520px) {
+  .flow { grid-template-columns: 1fr; }
+  .pair { grid-template-columns: 1fr; }
+  body { font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Veil home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+      veil
+    </a>
+    <div class="navlinks">
+      <a href="#nuvio">Nuvio + Trakt</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#music">Music</a>
+      <a href="#faq">FAQ</a>
+      <a class="gh" href="https://github.com/trbrnt/Veil">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+  <header class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Launcher for Google TV and Android TV</p>
+      <h1>A calm, private home screen for your <span>TV</span>.</h1>
+      <p class="lead">Veil replaces the Google TV home screen with big artwork, what you're watching and your apps. No ads, no "recommended for you", no tracking.</p>
+      <div class="btns">
+        <a class="pill primary" href="https://github.com/trbrnt/Veil">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.2-3.1-.1-.4-.5-1.6.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.6 18.3 5 18.3 5c.7 1.6.2 2.8.1 3.2.8.8 1.2 1.9 1.2 3.1 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5Z"/></svg>
+          Get Veil on GitHub
+        </a>
+        <a class="pill" href="https://github.com/trbrnt/Veil/blob/main/AGENT_INSTALL.md">Install guide</a>
+      </div>
+      <div class="facts">
+        <span><b>Free</b> and open source (GPL-3.0)</span>
+        <span><b>Android 9+</b> TVs and streamers</span>
+        <span>Works with <b>Nuvio</b> and <b>Trakt</b></span>
+      </div>
+      <figure class="tv" style="margin-bottom:0">
+        <img src="screenshots/01-home.jpg" width="1600" height="900" alt="Veil home screen on Google TV: full-screen artwork of the show you're watching, Continue Watching row from Trakt, and app shortcuts for Nuvio, Spotify and TizenTube">
+      </figure>
+    </div>
+  </header>
+
+  <section class="band" id="nuvio">
+    <div class="wrap split">
+      <div class="copy">
+        <p class="eyebrow">Nuvio + Trakt</p>
+        <h2>Continue Watching that opens straight in Nuvio.</h2>
+        <p class="lead">Nuvio saves your progress to Trakt. Veil reads it back and puts your shows and films on the home screen, with the artwork and title logo of what you're on.</p>
+        <div class="flow" aria-label="How it works">
+          <div><small>Watch</small><span>Stop an episode in Nuvio</span></div>
+          <div><small>Sync</small><span>Nuvio saves it to your Trakt</span></div>
+          <div><small>Resume</small><span>Press it on Veil's Home, it opens in Nuvio</span></div>
+        </div>
+        <ul>
+          <li><b>Sign in with a code.</b> Scan a QR code with your phone. No keys to set up.</li>
+          <li><b>Mark watched or remove</b> items from the row with a long press.</li>
+          <li><b>Colours follow the artwork</b>, so every show gets its own look.</li>
+        </ul>
+      </div>
+      <div class="stack">
+        <figure class="tv" style="margin:0"><img src="screenshots/02-home-colours-from-artwork.jpg" width="1600" height="900" loading="lazy" alt="Veil Continue Watching on Android TV with the accent colour taken from the show's artwork"></figure>
+        <figure class="tv" style="margin:0"><img src="screenshots/03-home-title-logo.jpg" width="1600" height="900" loading="lazy" alt="Veil showing the title logo of a show from Trakt over full-screen artwork"></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="privacy">
+    <div class="wrap">
+      <div class="split flip">
+        <div class="copy">
+          <p class="eyebrow">Privacy</p>
+          <h2>One switch to block ads and trackers on the whole TV.</h2>
+          <p class="lead">Veil turns on Android's encrypted Private DNS with NextDNS, or AdGuard DNS if you don't have NextDNS. It covers every app, and you can pause it for 15 minutes when a site breaks.</p>
+          <ul>
+            <li><b>See what it blocked.</b> With NextDNS, Home shows how many trackers were stopped.</li>
+            <li><b>Off until you turn it on</b>, and easy to switch off again.</li>
+          </ul>
+        </div>
+        <div class="pair">
+          <figure class="tv" style="margin:0"><img src="screenshots/04-privacy-panel-nextdns.jpg" width="1600" height="900" loading="lazy" alt="Veil privacy panel with NextDNS blocked tracker count on Google TV"></figure>
+          <figure class="tv" style="margin:0"><img src="screenshots/05-veil-menu.jpg" width="1600" height="900" loading="lazy" alt="Veil menu with themes and settings"></figure>
+        </div>
+      </div>
+      <div class="services">
+        <div><h3>No Veil servers</h3><p>No accounts, analytics or ads. The TV talks to each service directly over HTTPS.</p></div>
+        <div><h3>TMDB</h3><p>Titles of what you're watching, to get artwork.</p></div>
+        <div><h3>Trakt</h3><p>Your watch progress, with your own login stored on the TV.</p></div>
+        <div><h3>LRCLIB and Open-Meteo</h3><p>The song that's playing, for lyrics. Your chosen city, for weather.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="music">
+    <div class="wrap split">
+      <div class="copy">
+        <p class="eyebrow">Screensaver</p>
+        <h2>Synced lyrics and a visualizer that keeps the beat.</h2>
+        <p class="lead">When music plays from Spotify or any other app, Veil Ambient shows the album art with lyrics, word by word when they're available. Or switch to a full-screen visualizer that picks out the kick, snare, hi-hats and vocals.</p>
+        <ul>
+          <li><b>Locks onto the tempo</b> and pulses on the beat.</li>
+          <li><b>A slow artwork slideshow</b> when nothing is playing.</li>
+        </ul>
+      </div>
+      <div class="stack">
+        <figure class="tv" style="margin:0"><img src="screenshots/07-music-synced-lyrics.jpg" width="1600" height="900" loading="lazy" alt="Veil Ambient screensaver showing synced song lyrics on Google TV"></figure>
+        <div class="pair">
+          <figure class="tv" style="margin:0"><img src="screenshots/10-visualizer-1.jpg" width="1600" height="900" loading="lazy" alt="Veil music visualizer on Android TV"></figure>
+          <figure class="tv" style="margin:0"><img src="screenshots/11-visualizer-2.jpg" width="1600" height="900" loading="lazy" alt="Another Veil music visualizer preset"></figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="themes">
+    <div class="wrap">
+      <div class="copy" style="max-width:720px">
+        <p class="eyebrow">Themes</p>
+        <h2>Eight themes. Try one on this page.</h2>
+        <p class="lead">These are the same colours Veil uses on the TV, along with glassy cards, soft UI sounds and snow in December.</p>
+      </div>
+      <div class="themes" role="group" aria-label="Veil themes">
+        <button class="swatch" data-bg="#15171C" data-a="#D9FF6B" aria-pressed="true"><i style="background:#15171C;--a:#D9FF6B"></i>Veil</button>
+        <button class="swatch" data-bg="#0E1621" data-a="#5EF0C2" aria-pressed="false"><i style="background:#0E1621;--a:#5EF0C2"></i>Aurora</button>
+        <button class="swatch" data-bg="#1B1411" data-a="#FFA45C" aria-pressed="false"><i style="background:#1B1411;--a:#FFA45C"></i>Ember</button>
+        <button class="swatch" data-bg="#17131F" data-a="#C9B8FF" aria-pressed="false"><i style="background:#17131F;--a:#C9B8FF"></i>Haze</button>
+        <button class="swatch" data-bg="#0F1820" data-a="#8FD3FF" aria-pressed="false"><i style="background:#0F1820;--a:#8FD3FF"></i>Glacier</button>
+        <button class="swatch" data-bg="#1D1217" data-a="#FF8FB1" aria-pressed="false"><i style="background:#1D1217;--a:#FF8FB1"></i>Bloom</button>
+        <button class="swatch" data-bg="#121212" data-a="#F4F5F7" aria-pressed="false"><i style="background:#121212;--a:#F4F5F7"></i>Mono</button>
+        <button class="swatch" data-bg="#0F1116" data-a="#F2C94C" aria-pressed="false"><i style="background:#0F1116;--a:#F2C94C"></i>Gilded</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="devices">
+    <div class="wrap">
+      <p class="eyebrow">Devices</p>
+      <h2 style="margin-top:12px">Made on a Google TV Streamer. Runs on Android TV 9 and newer.</h2>
+      <div class="req">
+        <div><h3>Your TV</h3><p>A Google TV or Android TV device with Android 9 or newer, with developer options turned on so it can be installed over ADB.</p></div>
+        <div><h3>A computer</h3><p>Windows, macOS or Linux. You build Veil from source; the install guide takes you through it, or an AI coding agent can do it for you.</p></div>
+        <div><h3>Light on old hardware</h3><p>Everything heavy is drawn once and reused, and it was profiled on a real streamer, so it stays smooth on slow TV chips.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="faq">
+    <div class="wrap">
+      <p class="eyebrow">Questions</p>
+      <h2 style="margin-top:12px">FAQ</h2>
+      <div class="faq">
+        <details open><summary>Does Veil work with Nuvio?</summary><p>Yes. Nuvio syncs your progress to Trakt, and Veil shows it in Continue Watching. Pressing an episode opens it in Nuvio, ready to stream.</p></details>
+        <details><summary>Do I need a Trakt account?</summary><p>Only for Continue Watching. You sign in on the TV with a code or QR code. Everything else works without one.</p></details>
+        <details><summary>Is it free? Are there ads?</summary><p>Veil is free and open source under GPL-3.0. It has no ads, no analytics and no accounts of its own.</p></details>
+        <details><summary>Can I go back to the normal Google TV home screen?</summary><p>Yes. Veil doesn't remove Google's launcher. The install guide makes an undo script for your TV, and <code>adb uninstall dev.veil.launcher</code> removes Veil completely.</p></details>
+        <details><summary>Why isn't it on the Play Store?</summary><p>A home screen that blocks ads system-wide and replaces the Google TV launcher needs permissions that are granted over ADB. You install it yourself from the source code.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="cta-row">
+      <h2>Make your TV quiet again.</h2>
+      <a class="pill primary" href="https://github.com/trbrnt/Veil">Get Veil on GitHub</a>
+    </div>
+    <p>Artwork and logos from TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB. Veil uses Trakt but is not endorsed or certified by Trakt.</p>
+    <p>Google TV and Android TV are trademarks of Google LLC. NextDNS, Trakt, TMDB, Spotify and Nuvio are trademarks of their owners. Veil isn't affiliated with any of them.</p>
+  </div>
+</footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Veil",
+  "description": "A free, open-source, ad-free home screen (launcher) for Google TV and Android TV, with Continue Watching from Trakt that opens in Nuvio.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Android TV 9+, Google TV",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "license": "https://www.gnu.org/licenses/gpl-3.0.html",
+  "url": "https://trbrnt.github.io/Veil/",
+  "codeRepository": "https://github.com/trbrnt/Veil",
+  "screenshot": "https://trbrnt.github.io/Veil/screenshots/01-home.jpg"
+}
+</script>
+<script>
+(function () {
+  var root = document.documentElement;
+  document.querySelectorAll('.swatch').forEach(function (b) {
+    b.addEventListener('click', function () {
+      root.style.setProperty('--theme-bg', b.dataset.bg);
+      root.style.setProperty('--theme-accent', b.dataset.a);
+      document.querySelectorAll('.swatch').forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+    });
+  });
+})();
+</script>
+</body>
+</html>
