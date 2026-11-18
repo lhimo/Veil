@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Veil: private, ad-free launcher for Google TV and Android TV</title>
-<meta name="description" content="Veil is a free, open-source home screen for Google TV and Android TV. No ads or recommendations: Continue Watching from Trakt that opens straight in Nuvio, system-wide ad blocking, synced lyrics and a music visualizer.">
+<meta name="description" content="Veil is a free, open-source home screen for Google TV and Android TV. No ads or recommendations: Continue Watching from Trakt, Simkl or MDBList that opens straight in Nuvio or Stremio, system-wide ad blocking, synced lyrics and a music visualizer.">
 <link rel="canonical" href="https://trbrnt.github.io/Veil/">
 <meta name="color-scheme" content="dark light">
 <meta name="theme-color" content="#15171C">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Veil">
 <meta property="og:title" content="Veil: private, ad-free launcher for Google TV and Android TV">
-<meta property="og:description" content="Veil is a free, open-source home screen for Google TV and Android TV. No ads or recommendations: Continue Watching from Trakt that opens straight in Nuvio, system-wide ad blocking, synced lyrics and a music visualizer.">
+<meta property="og:description" content="Veil is a free, open-source home screen for Google TV and Android TV. No ads or recommendations: Continue Watching from Trakt, Simkl or MDBList that opens straight in Nuvio or Stremio, system-wide ad blocking, synced lyrics and a music visualizer.">
 <meta property="og:url" content="https://trbrnt.github.io/Veil/">
 <meta property="og:image" content="https://trbrnt.github.io/Veil/screenshots/01-home.jpg">
 <meta property="og:image:width" content="1600">
@@ -198,7 +198,7 @@ footer .cta-row h2 { color: var(--text); }
       veil
     </a>
     <div class="navlinks">
-      <a href="#nuvio">Nuvio + Trakt</a>
+      <a href="#nuvio">Nuvio + Stremio</a>
       <a href="#privacy">Privacy</a>
       <a href="#music">Music</a>
       <a href="#faq">FAQ</a>
@@ -223,7 +223,7 @@ footer .cta-row h2 { color: var(--text); }
       <div class="facts">
         <span><b>Free</b> and open source (GPL-3.0)</span>
         <span><b>Android 9+</b> TVs and streamers</span>
-        <span>Works with <b>Nuvio</b> and <b>Trakt</b></span>
+        <span>Works with <b>Nuvio</b>, <b>Stremio</b>, <b>Trakt</b>, <b>Simkl</b> and <b>MDBList</b></span>
       </div>
       <figure class="tv" style="margin-bottom:0">
         <img src="screenshots/01-home.jpg" width="1600" height="900" alt="Veil home screen on Google TV: full-screen artwork of the show you're watching, Continue Watching row from Trakt, and app shortcuts for Nuvio, Spotify and TizenTube">
@@ -234,16 +234,17 @@ footer .cta-row h2 { color: var(--text); }
   <section class="band" id="nuvio">
     <div class="wrap split">
       <div class="copy">
-        <p class="eyebrow">Nuvio + Trakt</p>
-        <h2>Continue Watching that opens straight in Nuvio.</h2>
-        <p class="lead">Nuvio saves your progress to Trakt. Veil reads it back and puts your shows and films on the home screen, with the artwork and title logo of what you're on.</p>
+        <p class="eyebrow">Nuvio + Stremio</p>
+        <h2>Continue Watching that opens straight in Nuvio or Stremio.</h2>
+        <p class="lead">Your player saves your progress to Trakt, Simkl or MDBList. Veil reads it back and puts your shows and films on the home screen, with the artwork and title logo of what you're on. Press one and it opens the exact episode, ready to stream.</p>
         <div class="flow" aria-label="How it works">
-          <div><small>Watch</small><span>Stop an episode in Nuvio</span></div>
-          <div><small>Sync</small><span>Nuvio saves it to your Trakt</span></div>
-          <div><small>Resume</small><span>Press it on Veil's Home, it opens in Nuvio</span></div>
+          <div><small>Watch</small><span>Stop an episode in Nuvio or Stremio</span></div>
+          <div><small>Sync</small><span>It's saved to your Trakt, Simkl or MDBList</span></div>
+          <div><small>Resume</small><span>Press it on Veil's Home, it opens right there</span></div>
         </div>
         <ul>
-          <li><b>Sign in with a code.</b> Scan a QR code with your phone. No keys to set up.</li>
+          <li><b>Pick your tracker, sign in with a code.</b> Trakt, Simkl or MDBList: scan a QR code with your phone. No keys to set up.</li>
+          <li><b>Pick your player once.</b> Nuvio or Stremio, chosen in the Veil menu. No asking every time.</li>
           <li><b>Mark watched or remove</b> items from the row with a long press.</li>
           <li><b>Colours follow the artwork</b>, so every show gets its own look.</li>
         </ul>
@@ -275,7 +276,7 @@ footer .cta-row h2 { color: var(--text); }
       <div class="services">
         <div><h3>No Veil servers</h3><p>No accounts, analytics or ads. The TV talks to each service directly over HTTPS.</p></div>
         <div><h3>TMDB</h3><p>Titles of what you're watching, to get artwork.</p></div>
-        <div><h3>Trakt</h3><p>Your watch progress, with your own login stored on the TV.</p></div>
+        <div><h3>Trakt, Simkl or MDBList</h3><p>Your watch progress from the one you connect, with your own login stored on the TV.</p></div>
         <div><h3>LRCLIB and Open-Meteo</h3><p>The song that's playing, for lyrics. Your chosen city, for weather.</p></div>
       </div>
     </div>
@@ -340,7 +341,8 @@ footer .cta-row h2 { color: var(--text); }
       <h2 style="margin-top:12px">FAQ</h2>
       <div class="faq">
         <details open><summary>Does Veil work with Nuvio?</summary><p>Yes. Nuvio syncs your progress to Trakt, and Veil shows it in Continue Watching. Pressing an episode opens it in Nuvio, ready to stream.</p></details>
-        <details><summary>Do I need a Trakt account?</summary><p>Only for Continue Watching. You sign in on the TV with a code or QR code. Everything else works without one.</p></details>
+        <details><summary>Does Veil work with Stremio?</summary><p>Yes. Pick Stremio under "Play shows with" in the Veil menu, and pressing an episode in Continue Watching opens its stream list in Stremio.</p></details>
+        <details><summary>Do I need a Trakt account? What about Simkl or MDBList?</summary><p>Only for Continue Watching, and any one of the three works: Trakt, Simkl or MDBList. You pick it on the TV and sign in with a QR code. Everything else works without an account.</p></details>
         <details><summary>Is it free? Are there ads?</summary><p>Veil is free and open source under GPL-3.0. It has no ads, no analytics and no accounts of its own.</p></details>
         <details><summary>Can I go back to the normal Google TV home screen?</summary><p>Yes. Veil doesn't remove Google's launcher. The install guide makes an undo script for your TV, and <code>adb uninstall dev.veil.launcher</code> removes Veil completely.</p></details>
         <details><summary>Why isn't it on the Play Store?</summary><p>A home screen that blocks ads system-wide and replaces the Google TV launcher needs permissions that are granted over ADB. You install it yourself from the source code.</p></details>
@@ -355,8 +357,8 @@ footer .cta-row h2 { color: var(--text); }
       <h2>Make your TV quiet again.</h2>
       <a class="pill primary" href="https://github.com/trbrnt/Veil">Get Veil on GitHub</a>
     </div>
-    <p>Artwork and logos from TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB. Veil uses Trakt but is not endorsed or certified by Trakt.</p>
-    <p>Google TV and Android TV are trademarks of Google LLC. NextDNS, Trakt, TMDB, Spotify and Nuvio are trademarks of their owners. Veil isn't affiliated with any of them.</p>
+    <p>Artwork and logos from TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB. Veil uses Trakt but is not endorsed or certified by Trakt. Watch progress can also come from Simkl or MDBList.</p>
+    <p>Google TV and Android TV are trademarks of Google LLC. NextDNS, Trakt, Simkl, MDBList, TMDB, Spotify, Nuvio and Stremio are trademarks of their owners. Veil isn't affiliated with any of them.</p>
   </div>
 </footer>
 
@@ -365,7 +367,7 @@ footer .cta-row h2 { color: var(--text); }
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "Veil",
-  "description": "A free, open-source, ad-free home screen (launcher) for Google TV and Android TV, with Continue Watching from Trakt that opens in Nuvio.",
+  "description": "A free, open-source, ad-free home screen (launcher) for Google TV and Android TV, with Continue Watching from Trakt, Simkl or MDBList that opens in Nuvio or Stremio.",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Android TV 9+, Google TV",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
